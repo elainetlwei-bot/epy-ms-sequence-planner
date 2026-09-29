@@ -43,14 +43,19 @@
   }
   .topbar-inner{
     max-width:1080px;margin:0 auto;
-    display:flex;align-items:stretch;justify-content:space-between;
-    gap:20px;flex-wrap:wrap;
+    display:flex;align-items:stretch;justify-content:flex-start;
+    gap:0;flex-wrap:wrap;
   }
-  .topbar-brand{background:var(--ink);color:#fff;padding:14px 26px;display:flex;flex-direction:column;justify-content:center;}
+  .topbar-brand{background:var(--ink);color:#fff;padding:14px 26px;display:flex;flex-direction:column;justify-content:center;flex-shrink:0;}
+  .topbar-notice{flex:0 1 525px;min-width:0;max-width:525px;padding:10px 14px;align-self:center;font-size:11.5px;line-height:1.45;color:var(--ink-soft);}
+  .topbar-notice-line{display:block;white-space:normal;}
+  .topbar-notice-line + .topbar-notice-line{margin-top:2px;}
+  .topbar-notice strong{color:var(--ink);font-weight:700;}
+  @media (max-width:700px){.topbar-notice{flex:1 1 360px;max-width:525px;padding:8px 12px;}.topbar-controls{width:100%;}}
   .brand{font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em;margin:0;color:#fff;}
   .brand-sub{font-family:var(--mono);font-size:10px;letter-spacing:.07em;text-transform:uppercase;color:rgba(255,255,255,.75);margin:2px 0 0;}
 
-  .topbar-controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:0 26px 14px 0;}
+  .topbar-controls{display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;padding:0 26px 14px 26px;width:100%;}
   .ctrl{display:flex;flex-direction:column;gap:4px;}
   .ctrl > label{font-family:var(--mono);font-size:9.5px;letter-spacing:.07em;text-transform:uppercase;color:var(--ink-soft);}
   .ctrl select, .ctrl input[type=number]{
@@ -70,10 +75,13 @@
   /* ---------- Main / map ---------- */
   .main{padding:28px 26px 20px;overflow-x:auto;flex:1;max-width:1080px;margin:0 auto;width:100%;}
   .disclaimer{
-    margin:28px 0 0;max-width:720px;font-size:12px;line-height:1.65;color:var(--ink-soft);
-    border-left:3px solid var(--mist);padding:12px 0 12px 16px;
+    margin:0;width:100%;font-size:12.5px;line-height:1.55;color:var(--ink);
+    background:var(--paper-raised);border:1px solid var(--mist);border-left:5px solid var(--ink);
+    border-radius:7px;padding:13px 15px;box-shadow:0 1px 3px rgba(93,23,37,.08);
+    text-align:left;
   }
-  .disclaimer strong{color:var(--ink);font-weight:600;}
+  .disclaimer strong{color:var(--ink);font-weight:700;}
+  .disclaimer .tool-credit{display:block;margin-top:10px;padding-top:10px;border-top:1px solid var(--mist-soft);font-size:12px;color:var(--ink-soft);font-family:var(--mono);}
 
   /* ---------- Admin drawer ---------- */
   .admin{border-top:1px solid var(--mist-soft);background:var(--paper-raised);margin-top:auto;}
@@ -150,7 +158,9 @@
 
   /* ---------- Main ---------- */
   .main{padding:32px 36px 60px;overflow-x:auto;}
-  .main-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:8px;flex-wrap:wrap;gap:12px;}
+  .main-head{display:grid;grid-template-columns:minmax(260px,1fr) minmax(360px,520px);align-items:start;margin-bottom:8px;gap:24px;}
+  .main-head-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px;}
+  @media (max-width:850px){.main-head{grid-template-columns:1fr;}.main-head-right{align-items:stretch;}}
   .main-title{font-family:var(--display);font-weight:700;font-size:27px;margin:0;letter-spacing:-0.01em;}
   .main-sub{font-family:var(--mono);font-size:12px;color:var(--ink-soft);margin-top:4px;}
   .legend{display:flex;gap:14px;font-size:11px;color:var(--ink-soft);font-family:var(--mono);flex-wrap:wrap;}
@@ -227,6 +237,11 @@
       <p class="brand">EPY Sequence Planner</p>
       <p class="brand-sub">M.S. Educational Psychology &middot; 35 hrs</p>
     </div>
+    <div class="topbar-notice">
+      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated September 29, 2026.</div>
+      <div class="topbar-notice-line">Plan is built based on course scheduling information available through this date.</div>
+      <div class="topbar-notice-line"><strong>This is a planning aid, not an official schedule.</strong> Please confirm your sequence with your advisor and check the official course catalog before registering.</div>
+    </div>
 
     <div class="topbar-controls">
       <div class="ctrl ctrl-track">
@@ -269,19 +284,10 @@
         <span><span class="dot" style="background:var(--brass)"></span>locked &mdash; no other term</span>
         <span><span class="dot" style="background:var(--rail-green)"></span>completed</span>
       </div>
-    </div>
+   </div>
     <div class="board-wrap" id="boardWrap">
       <div class="empty-state"><b>No plan yet</b>Choose a start term and hit &ldquo;Generate plan.&rdquo;</div>
     </div>
-    <p class="disclaimer">
-      <strong>A planning aid, not an official schedule.</strong>
-      This tool is here for you to explore possible paths through the program. Actual course
-      offerings vary from year to year and depend on enrollment demand, faculty availability,
-      and department needs — a course shown here may be rescheduled or not offered at all.
-      Nothing in this plan is a guarantee that a course will be available in a given term.
-      Please confirm your sequence with your advisor and check the official course catalog
-      before registering.
-    </p>
   </main>
 
   <section class="admin">
@@ -371,7 +377,7 @@ let catalog = [
   {id:'c6', name:'Advanced Educational and Psychological Statistics', code:'EPY 8214', credits:4, prereqs:['c1'], offerings:[off('Spring')], track:'core', pools:[]},
   {id:'c7', name:'Psychological Foundations of Education', code:'EPY 8223', credits:3, prereqs:[], offerings:[off('Fall','odd')], track:'core', pools:[]},
   {id:'c8', name:'Cognitive and Affective Development', code:'EPY 8293', credits:3, prereqs:[], offerings:[off('Fall','even')], track:'core', pools:[]},
-  {id:'c9', name:'Introduction to Research in Educational Psychology', code:'EPY 6513', credits:3, prereqs:[], offerings:[off('Fall','odd')], track:'core', pools:[]},
+  {id:'c9', name:'Introduction to Research in Educational Psychology', code:'EPY 6513', credits:3, prereqs:[], offerings:[{season:'Fall', parity:'any', years:[2027]}, {season:'Fall', parity:'even', minYear:2028}], track:'core', pools:[]},
 
   {id:'c10', name:'Introduction to Qualitative Research', code:'EDF 9453', credits:3, prereqs:[], offerings:[off('Fall'),off('Spring')], track:'nonthesis', pools:[]},
   {id:'c11', name:'Creativity and Innovation', code:'EPY 6553', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'nonthesis', pools:['core-epy-elective','second-elective']},
@@ -404,7 +410,8 @@ function uid(){ return 'c' + Math.random().toString(36).slice(2,9); }
 function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; return d.innerHTML; }
 function catalogName(id){ const c=catalog.find(x=>x.id===id); return c?c.name:'(removed)'; }
 
-function offeringsLabel(offerings){
+function offeringsLabel(offerings, course){
+  if(course && course.code==='EPY 6513') return 'Fall 2027; Fall 2028 and every other Fall thereafter';
   return offerings.map(o => o.parity==='any' ? o.season : `${o.season} (${o.parity} yrs)`).join(', ');
 }
 
@@ -442,7 +449,7 @@ function renderCatalog(){
           ${(c.pools||[]).map(pid=>`<span class="pool-tag">${escapeHtml((pools[pid]?.label||pid).split(' (')[0])}</span>`).join('')}
           ${isBottleneck(c)?`<span class="bottleneck-tag" title="Offered only once every two years">⏳ once/2 yrs</span>`:''}
         </div>
-        <div class="ci-meta">${offeringsLabel(c.offerings)}${c.prereqs.length ? '<br>requires ' + c.prereqs.map(id=>catalogName(id)).join(', ') : ''}</div>
+        <div class="ci-meta">${offeringsLabel(c.offerings, c)}${c.prereqs.length ? '<br>requires ' + c.prereqs.map(id=>catalogName(id)).join(', ') : ''}</div>
       </div>
     `).join('');
   }
@@ -563,8 +570,14 @@ document.getElementById('clearBtn').addEventListener('click', ()=>{
 });
 
 // ---------------- Scheduling engine ----------------
-function offeringMatches(offerings, term, year){
-  return offerings.some(o => o.season===term && (o.parity==='any' || (o.parity==='odd' ? year%2!==0 : year%2===0)));
+function offeringMatches(offerings, term, year, course){
+  return offerings.some(o => {
+    if(o.season !== term) return false;
+    if(o.years && o.years.includes(year)) return true;
+    if(o.years) return false;
+    if(o.minYear !== undefined && year < o.minYear) return false;
+    return o.parity==='any' || (o.parity==='odd' ? year%2!==0 : year%2===0);
+  });
 }
 
 function buildSemesterSequence(){
@@ -603,7 +616,7 @@ function courseLevel(c){
 // Which term indices in the planning window actually offer this course.
 function feasibleIdx(c, semesters){
   const out = [];
-  semesters.forEach((s,i)=>{ if(offeringMatches(c.offerings, s.term, s.year)) out.push(i); });
+  semesters.forEach((s,i)=>{ if(offeringMatches(c.offerings, s.term, s.year, c)) out.push(i); });
   return out;
 }
 
@@ -746,9 +759,9 @@ function generatePlan(){
     if(missing.length){
       reason = `Waiting on: ${missing.map(catalogName).join(', ')}`;
     } else if(meta[c.id].dof === 0){
-      reason = `Not offered at all within this window (${offeringsLabel(c.offerings)}). Extend "Terms to graduation" or change the start term.`;
+      reason = `Not offered at all within this window (${offeringsLabel(c.offerings, c)}). Extend "Terms to graduation" or change the start term.`;
     } else if(isBottleneck(c)){
-      reason = `⏳ Offered once every two years (${offeringsLabel(c.offerings)}) — every available term is already full. Raise the credit cap or add a term.`;
+      reason = `⏳ Offered once every two years (${offeringsLabel(c.offerings, c)}) — every available term is already full. Raise the credit cap or add a term.`;
     }
     unscheduled.push({course:c, reason});
   });
@@ -769,7 +782,7 @@ function courseSemesterIndex(courseId){
 function validSemesterOptionsHtml(c, selectedIdx){
   return plan.semesters
     .map((s2,i2)=>({s2,i2}))
-    .filter(({s2}) => offeringMatches(c.offerings, s2.term, s2.year))
+    .filter(({s2}) => offeringMatches(c.offerings, s2.term, s2.year, c))
     .map(({s2,i2})=>`<option value="${i2}" ${i2===selectedIdx?'selected':''}>${s2.label}</option>`)
     .join('');
 }
@@ -817,7 +830,7 @@ function renderBoard(){
       <div class="sem-credits ${coursesHere.length>maxCourses?'over':''}">${coursesHere.length} / ${maxCourses} courses &middot; ${creditSum} cr</div></div>`;
     coursesHere.forEach(c=>{
       const violated = c.prereqs.some(p=>{ const pIdx=courseSemesterIndex(p); return pIdx===undefined || pIdx>=si; });
-      const notOffered = !offeringMatches(c.offerings, sem.term, sem.year);
+      const notOffered = !offeringMatches(c.offerings, sem.term, sem.year, c);
       const invalid = violated || notOffered;
       const isLocked = !!(plan.lockNotes && plan.lockNotes[c.id]);
       const isElective = !!(c.pools && c.pools.length);
@@ -828,7 +841,7 @@ function renderBoard(){
           <span class="cc-credits">${c.credits} cr</span>
         </div>
         <div class="cc-title">${escapeHtml(c.name)}${isBottleneck(c)?`<span class="bottleneck-tag" title="Offered only once every two years">⏳</span>`:''}${isLocked?`<span class="lock-tag">🔒 locked</span>`:''}</div>
-        <div class="cc-meta"><span>${offeringsLabel(c.offerings)}</span></div>
+        <div class="cc-meta"><span>${offeringsLabel(c.offerings, c)}</span></div>
         ${invalid?`<div class="cc-warning">⚠ ${violated?'Prerequisite not yet completed':'Not offered this term'}</div>`:''}
         ${isLocked?`<div class="cc-locknote">${escapeHtml(plan.lockNotes[c.id])}</div>`:''}
         ${isLocked ? `<div class="cc-lockfixed">Fixed — no other term available</div>` : `<select class="move-select" data-move="${c.id}">
@@ -846,7 +859,7 @@ function renderBoard(){
         (c.pools && c.pools.length) &&
         !completed.has(c.id) &&
         courseSemesterIndex(c.id) !== si &&
-        offeringMatches(c.offerings, sem.term, sem.year)
+        offeringMatches(c.offerings, sem.term, sem.year, c)
       );
       html += `<div class="course-card open-slot">
         <div class="cc-type is-elective">Open slot</div>
