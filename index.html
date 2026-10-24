@@ -238,7 +238,7 @@
       <p class="brand-sub">M.S. Educational Psychology &middot; 35 hrs</p>
     </div>
     <div class="topbar-notice">
-      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated September 29, 2026.</div>
+      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated October 24, 2026.</div>
       <div class="topbar-notice-line">Plan is built based on course scheduling information available through this date.</div>
       <div class="topbar-notice-line"><strong>This is a planning aid, not an official schedule.</strong> Please confirm your sequence with your advisor and check the official course catalog before registering.</div>
     </div>
@@ -755,7 +755,7 @@ function generatePlan(){
     if(scheduledIn.has(c.id)) return;
     if((c.pools && c.pools.length) && !poolStillNeeded(c)){ poolExcluded.push(c); return; }
     let reason = 'No remaining term fits within the planning window.';
-    const missing = c.prereqs.filter(p => !scheduledIn.has(p));
+    const missing = c.prereqs.filter(p => !completed.has(p) && !scheduledIn.has(p));
     if(missing.length){
       reason = `Waiting on: ${missing.map(catalogName).join(', ')}`;
     } else if(meta[c.id].dof === 0){
@@ -829,7 +829,7 @@ function renderBoard(){
       <div class="sem-header"><div class="sem-name">${sem.label}</div>
       <div class="sem-credits ${coursesHere.length>maxCourses?'over':''}">${coursesHere.length} / ${maxCourses} courses &middot; ${creditSum} cr</div></div>`;
     coursesHere.forEach(c=>{
-      const violated = c.prereqs.some(p=>{ const pIdx=courseSemesterIndex(p); return pIdx===undefined || pIdx>=si; });
+      const violated = c.prereqs.some(p=>{ if(completed.has(p)) return false; const pIdx=courseSemesterIndex(p); return pIdx===undefined || pIdx>=si; });
       const notOffered = !offeringMatches(c.offerings, sem.term, sem.year, c);
       const invalid = violated || notOffered;
       const isLocked = !!(plan.lockNotes && plan.lockNotes[c.id]);
@@ -955,7 +955,7 @@ function drawConnectors(){
       const fr = fromEl.getBoundingClientRect(), tr = toEl.getBoundingClientRect();
       const x1 = fr.right - wrapRect.left, y1 = fr.top - wrapRect.top + fr.height/2;
       const x2 = tr.left - wrapRect.left, y2 = tr.top - wrapRect.top + tr.height/2;
-      const violated = (courseSemesterIndex(pId)===undefined) || (courseSemesterIndex(pId) >= courseSemesterIndex(c.id));
+      const violated = !completed.has(pId) && ((courseSemesterIndex(pId)===undefined) || (courseSemesterIndex(pId) >= courseSemesterIndex(c.id)));
       const color = violated ? 'var(--rail-red)' : 'var(--rail-green)';
       const midX = (x1+x2)/2;
       svg += `<path d="M ${x1} ${y1} C ${midX} ${y1}, ${midX} ${y2}, ${x2} ${y2}" fill="none" stroke="${color}" stroke-width="1.6" opacity="0.55"/>`;
