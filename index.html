@@ -238,7 +238,7 @@
       <p class="brand-sub">M.S. Educational Psychology &middot; 35 hrs</p>
     </div>
     <div class="topbar-notice">
-      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated October 24, 2026.</div>
+      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated October 26, 2026.</div>
       <div class="topbar-notice-line">Plan is built based on course scheduling information available through this date.</div>
       <div class="topbar-notice-line"><strong>This is a planning aid, not an official schedule.</strong> Please confirm your sequence with your advisor and check the official course catalog before registering.</div>
     </div>
@@ -253,7 +253,7 @@
       </div>
       <div class="ctrl">
         <label for="startTerm">Start</label>
-        <select id="startTerm"><option>Fall</option><option>Spring</option><option>Summer</option></select>
+        <select id="startTerm"><option>Fall</option><option>Spring</option></select>
       </div>
       <div class="ctrl ctrl-narrow">
         <label for="startYear">Year</label>
@@ -584,12 +584,10 @@ function buildSemesterSequence(){
   const startTerm = document.getElementById('startTerm').value;
   const startYear = parseInt(document.getElementById('startYear').value) || 2026;
   const numTerms = parseInt(document.getElementById('numTerms').value) || 4;
-  // Only run a summer column if something in this track is actually taught then —
-  // otherwise summer just adds empty terms to the map.
-  const includeSummer = catalog
-    .filter(c => c.track==='core' || c.track===currentTrack)
-    .some(c => c.offerings.some(o => o.season==='Summer'));
-  const cycle = includeSummer ? ['Fall','Spring','Summer'] : ['Fall','Spring'];
+  // Standard degree plans display Fall and Spring only.
+  // Summer thesis hours may be available with funding approval, but are
+  // deliberately excluded from the automatically generated sequence.
+  const cycle = ['Fall','Spring'];
   // Fall Y is followed by Spring Y+1 and Summer Y+1 — they belong to the same
   // academic year, one calendar year apart. seasonOffset captures that gap.
   const seasonOffset = {Fall:0, Spring:1, Summer:1};
