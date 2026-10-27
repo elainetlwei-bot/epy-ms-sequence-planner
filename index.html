@@ -380,10 +380,10 @@ let catalog = [
   {id:'c9', name:'Introduction to Research in Educational Psychology', code:'EPY 6513', credits:3, prereqs:[], offerings:[{season:'Fall', parity:'any', years:[2027]}, {season:'Fall', parity:'even', minYear:2028}], track:'core', pools:[]},
 
   {id:'c10', name:'Introduction to Qualitative Research', code:'EDF 9453', credits:3, prereqs:[], offerings:[off('Fall'),off('Spring')], track:'nonthesis', pools:[]},
-  {id:'c11', name:'Creativity and Innovation', code:'EPY 6553', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'nonthesis', pools:['core-epy-elective','second-elective']},
-  {id:'c12', name:'Psychology of the Gifted', code:'EPY 8523', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'nonthesis', pools:['core-epy-elective','second-elective']},
-  {id:'c13', name:'Practicum in Teaching with Educational Psychology', code:'EPY 8533', credits:3, prereqs:[], offerings:[off('Spring','odd')], track:'nonthesis', pools:['core-epy-elective','second-elective']},
-  {id:'c14', name:'Seminar in Contemporary Issues in Educational Psychology', code:'EPY 9723', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'nonthesis', pools:['core-epy-elective','second-elective']},
+  {id:'c11', name:'Creativity and Innovation', code:'EPY 6553', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'core', pools:['core-epy-elective','second-elective']},
+  {id:'c12', name:'Psychology of the Gifted', code:'EPY 8523', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'core', pools:['core-epy-elective','second-elective']},
+  {id:'c13', name:'Practicum in Teaching with Educational Psychology', code:'EPY 8533', credits:3, prereqs:[], offerings:[off('Spring','odd')], track:'core', pools:['core-epy-elective','second-elective']},
+  {id:'c14', name:'Seminar in Contemporary Issues in Educational Psychology', code:'EPY 9723', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'core', pools:['core-epy-elective','second-elective']},
   {id:'c15', name:'PSY Elective (advisor-approved)', code:'PSY XXXX', credits:3, prereqs:[], offerings:[off('Fall'),off('Spring')], track:'nonthesis', pools:['second-elective']},
 
   {id:'c16', name:'Thesis Research', code:'EPY 9000', credits:6, prereqs:[], offerings:[off('Fall'),off('Spring'),off('Summer')], track:'thesis', pools:[]},
@@ -483,6 +483,7 @@ function renderPools(){
   const wrap = document.getElementById('poolConfig');
   const activePoolIds = new Set();
   catalog.filter(c=>c.track==='core'||c.track===currentTrack).forEach(c=>(c.pools||[]).forEach(pid=>activePoolIds.add(pid)));
+  if(currentTrack==='thesis') activePoolIds.delete('second-elective');
   if(activePoolIds.size===0){ wrap.innerHTML = '<p class="hint">No elective pools defined for this track.</p>'; return; }
   wrap.innerHTML = Array.from(activePoolIds).map(pid=>{
     const p = pools[pid] || {label:pid, pick:1};
@@ -661,13 +662,14 @@ function generatePlan(){
   const count = semesters.map(()=>0);
   const lockNotes = {};
   const overloadedTerms = new Set();
+  const poolTarget = pid => currentTrack==='thesis' && pid==='second-elective' ? 0 : (pools[pid]?.pick ?? 1);
   const poolCounts = {};
   Object.keys(pools).forEach(pid=>poolCounts[pid]=0);
-  const poolStillNeeded = c => (c.pools||[]).some(pid => poolCounts[pid] < (pools[pid]?.pick ?? 1));
+  const poolStillNeeded = c => (c.pools||[]).some(pid => poolCounts[pid] < poolTarget(pid));
 
   function claimPool(c){
     for(const pid of (c.pools||[])){
-      if(poolCounts[pid] < (pools[pid]?.pick ?? 1)){ poolCounts[pid]++; return; }
+      if(poolCounts[pid] < poolTarget(pid)){ poolCounts[pid]++; return; }
     }
   }
 
