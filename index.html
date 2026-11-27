@@ -238,7 +238,7 @@
       <p class="brand-sub">M.S. Educational Psychology &middot; 35 hrs</p>
     </div>
     <div class="topbar-notice">
-      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated November 23, 2026.</div>
+      <div class="topbar-notice-line">Unofficial tool developed and maintained by Dr. Elaine Wei. Last updated November 27, 2026.</div>
       <div class="topbar-notice-line">Plan is built based on course scheduling information available through this date.</div>
       <div class="topbar-notice-line"><strong>This is a planning aid, not an official schedule.</strong> Please confirm your sequence with your advisor and check the official course catalog before registering.</div>
     </div>
@@ -382,7 +382,7 @@ let catalog = [
   {id:'c10', name:'Introduction to Qualitative Research', code:'EDF 9453', credits:3, prereqs:[], offerings:[off('Fall'),off('Spring')], track:'nonthesis', pools:[]},
   {id:'c11', name:'Creativity and Innovation', code:'EPY 6553', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'core', pools:['core-epy-elective','second-elective']},
   {id:'c12', name:'Psychology of the Gifted', code:'EPY 8523', credits:3, prereqs:[], offerings:[off('Spring','even')], track:'core', pools:['core-epy-elective','second-elective']},
-  {id:'c13', name:'Practicum in Teaching with Educational Psychology', code:'EPY 8533', credits:3, prereqs:[], offerings:[off('Fall','even')], track:'core', pools:['core-epy-elective','second-elective']},
+  {id:'c13', name:'Practicum in Teaching with Educational Psychology', code:'EPY 8533', credits:3, prereqs:[], offerings:[{season:'Spring', parity:'odd', minYear:2029}], track:'core', pools:['core-epy-elective','second-elective']},
   {id:'c14', name:'Seminar in Contemporary Issues in Educational Psychology', code:'EPY 9723', credits:3, prereqs:[], offerings:[off('Fall','odd')], track:'core', pools:['core-epy-elective','second-elective']},
   {id:'c15', name:'PSY Elective (advisor-approved)', code:'PSY XXXX', credits:3, prereqs:[], offerings:[off('Fall'),off('Spring')], track:'nonthesis', pools:['second-elective']},
 
@@ -411,6 +411,7 @@ function escapeHtml(s){ const d=document.createElement('div'); d.textContent=s; 
 function catalogName(id){ const c=catalog.find(x=>x.id===id); return c?c.name:'(removed)'; }
 
 function offeringsLabel(offerings, course){
+  if(course && course.code==='EPY 8533') return 'Spring 2029 and every other Spring thereafter';
   if(course && course.code==='EPY 6513') return 'Fall 2027; Fall 2028 and every other Fall thereafter';
   return offerings.map(o => o.parity==='any' ? o.season : `${o.season} (${o.parity} yrs)`).join(', ');
 }
